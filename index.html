@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .Topic-a {
+            width: 100px;
+            height: 60px;
+            font-size: 30px;
+            border: 1px solid black;
+            text-align: center;
+            font-family: "monospace";
+        }
+
+        .Equal to {
+            font-size: 30px;
+        }
+
+        .Answer-c {
+            width: 100px;
+            height: 65px;
+            font-size: 30px;
+            text-align: center;
+            font-family: "monospace";
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="Topic" class="Topic-a">題目</div> <!--題目 -->
+        <div class="Equal to">=</div>
+        <input id="Answer" value="" class="Answer-c" placeholder="請輸入答案"><!--答案輸入框 -->
+    </div>
+    <button id="Sure" type="button" class="btn btn-outline-success" style="margin-top:20px">確定</button>
+    <button id="Next" type="button" class="btn btn-outline-warning " style="margin-top:10px">下一題</button>
+
+    <script>
+        let correntAnswer; //儲存答案的名稱
+        let isAnswerChecked = false; //檢查答案的名稱
+
+        //生成乘數與被成數
+        function RandomQuestion() {
+            const multiplier = (Math.floor(Math.random() * 8) + 2); //乘數
+            const multiplicand = (Math.floor(Math.random() * 8) + 2);//被乘數
+            const question = `${multiplier} * ${multiplicand}`//先行成乘數與被乘數算式出來
+            correntAnswer = multiplier * multiplicand; //開始計算
+
+            //顯示題目在題目框中
+            document.getElementById("Topic").innerText = question;  //顯示題目
+            document.getElementById("Answer").value = "";//輸入答案
+            document.getElementById("Answer").style.color = "black";//把輸入框
+            
+            isAnswerChecked = false;
+        }
+
+        //檢查答案
+        function checkAnswer() { 
+            const colorAnswer = document.getElementById("Answer");
+            const userAnswer = colorAnswer.value;
+
+            if (parseInt(userAnswer) === correntAnswer) { //當輸入框裡數字等於答案時
+                colorAnswer.style.color = "green"; //顯示綠色
+                isAnswerChecked = true;//檢查答案是否正確
+            } else {
+                colorAnswer.style.color = "red";//否則顯示紅色
+                isAnswerChecked = false;//檢查答案是否正確
+            }
+        }
+        //  按下一題時判斷
+        function nextQuestion() {
+            if(isAnswerChecked) {
+                RandomQuestion();
+            }else{
+                alert("請檢查答案是否正確,再按下一題");
+            }
+        }
+
+        document.getElementById("Sure").addEventListener("click", checkAnswer);//當按下確定時會核對答案有無正確
+        document.getElementById("Next").addEventListener("click", nextQuestion);//當按下一題時會隨機出題目
+
+        window.onload = RandomQuestion;        
+    </script>
+</body>
+
+</html>
