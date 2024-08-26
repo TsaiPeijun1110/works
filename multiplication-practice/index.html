@@ -95,7 +95,7 @@
 
             if (parseInt(userAnswer) === correctAnswer) { //當輸入框裡數字等於答案時
                 colorAnswer.style.color = "green"; //顯示綠色
-                //實作答案答對時,答對題數加一
+                //實作答案答對時,增加答對一題
                 if (!isAnswerChecked) {
                     correctCount++; //
                     document.getElementById("correctCount").innerText = correctCount;
@@ -104,14 +104,6 @@
                 }
             } else {
                 colorAnswer.style.color = "red";//否則顯示紅色
-                //實作答案答錯時,答對題數減一
-                if (!isAnswerChecked) {
-                    correctCount--; //
-                    document.getElementById("correctCount").innerText = correctCount;
-
-                    isAnswerChecked = true;//檢查答案是否正確
-                }
-
                 isAnswerChecked = false;//檢查答案是否正確
             }
         }
