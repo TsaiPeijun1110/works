@@ -44,10 +44,19 @@
             text-align: center;
             font-family: "monospace";
         }
+        .score{
+            color: darksalmon;
+            font-size: 20px;
+            position: absolute;
+            font-weight: bold;
+            top: 20px;
+            right: 20px;
+        }
     </style>
 </head>
 
 <body>
+    <div class="score">答對題數:<span id="correctCount">0</span></div>
     <div class="container">
         <div id="Topic" class="Topic-a">題目</div> <!--題目 -->
         <div class="Equal to">=</div>
@@ -55,17 +64,21 @@
     </div>
     <button id="Sure" type="button" class="btn btn-outline-success" style="margin-top:20px">確定</button>
     <button id="Next" type="button" class="btn btn-outline-warning " style="margin-top:10px">下一題</button>
+    
+
+
 
     <script>
-        let correntAnswer; //儲存答案的名稱
+        let correctAnswer; //儲存答案的名稱
         let isAnswerChecked = false; //檢查答案的名稱
+        let correctCount = 0; //設定答對題數初始值為零
 
         //生成乘數與被成數
         function RandomQuestion() {
             const multiplier = (Math.floor(Math.random() * 8) + 2); //乘數
             const multiplicand = (Math.floor(Math.random() * 8) + 2);//被乘數
             const question = `${multiplier} * ${multiplicand}`//先行成乘數與被乘數算式出來
-            correntAnswer = multiplier * multiplicand; //開始計算
+            correctAnswer = multiplier * multiplicand; //開始計算
 
             //顯示題目在題目框中
             document.getElementById("Topic").innerText = question;  //顯示題目
@@ -80,26 +93,41 @@
             const colorAnswer = document.getElementById("Answer");
             const userAnswer = colorAnswer.value;
 
-            if (parseInt(userAnswer) === correntAnswer) { //當輸入框裡數字等於答案時
+            if (parseInt(userAnswer) === correctAnswer) { //當輸入框裡數字等於答案時
                 colorAnswer.style.color = "green"; //顯示綠色
-                isAnswerChecked = true;//檢查答案是否正確
+                //實作答案答對時,答對題數加一
+                if (!isAnswerChecked) {
+                    correctCount++; //
+                    document.getElementById("correctCount").innerText = correctCount;
+
+                    isAnswerChecked = true;//檢查答案是否正確
+                }
             } else {
                 colorAnswer.style.color = "red";//否則顯示紅色
+                //實作答案答錯時,答對題數減一
+                if (!isAnswerChecked) {
+                    correctCount--; //
+                    document.getElementById("correctCount").innerText = correctCount;
+
+                    isAnswerChecked = true;//檢查答案是否正確
+                }
+
                 isAnswerChecked = false;//檢查答案是否正確
             }
         }
         //  按下一題時判斷
         function nextQuestion() {
-            if(isAnswerChecked) {
+            if(isAnswerChecked) { //答對後按下一題時會出新題目
                 RandomQuestion();
             }else{
                 alert("請檢查答案是否正確,再按下一題");
             }
         }
-
+        //綁定按鈕
         document.getElementById("Sure").addEventListener("click", checkAnswer);//當按下確定時會核對答案有無正確
         document.getElementById("Next").addEventListener("click", nextQuestion);//當按下一題時會隨機出題目
 
+        //頁面載入時隨機出題目
         window.onload = RandomQuestion;        
     </script>
 </body>
