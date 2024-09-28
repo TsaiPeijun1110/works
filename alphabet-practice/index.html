@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body,
+        html,
+        #main-ui,
+        #start-ui {
+            margin: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 350px;
+            margin-top: -90px;
+            flex-wrap: wrap;
+            display: flex;
+        }
+
+        .score {
+            top: 20px;
+            right: 75px;
+            font-size: 20px;
+            font-weight: bold;
+            color: lightcoral;
+            position: absolute;
+            /*依畫面大小靠右邊縮放 */
+        }
+
+        .Answer {
+            width: 100px;
+            height: 50px;
+            padding: 10px;
+            margin-top: 40px;
+            margin-left: 40px;
+            border-radius: 10px;
+            text-align: center;
+            box-sizing: border-box;
+            border: 1px solid black;
+        }
+
+        .mp3 {
+            margin-left: -160px;
+            text-align: center;
+            margin-top: -150px;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="start-ui">
+        <button id="start" type="button" class="btn btn-outline-success"
+            style="text-align: center;">開始</button>
+    </div>
+    <div id="main-ui" style="display: none;">
+        <div class="score">答對題數：<span id="correctCount">0</span></div>
+        <div>
+            <audio id="mp3" class="mp3" controls src="./voices/A.mp3"></audio>
+        </div>
+        <div class="container" style="font-weight: bold;">
+            <div class="Answer" id="Answer-1">A</div>
+            <div class="Answer" id="Answer-2">B</div>
+            <div class="Answer" id="Answer-3">C</div>
+            <div class="Answer" id="Answer-4">D</div>
+        </div>
+        <button id="Sure" type="button" class="btn btn-outline-success"
+            style="margin-top:20px;text-align: center;">確定</button>
+        <button id="Next" type="button" class="btn btn-outline-warning " style="margin-top:10px">下一題</button>
+
+    </div>
+    <script>
+        let correctAnswer; //儲存答案的名稱
+        let selectedAnswer = null; //檢查答案的名稱
+        let correctCount = 0; //設定答對題數初始值為零
+
+        //點擊答案的事件處理函數
+        function selectAnswer(event) {
+            //將使用者答案儲存
+            selectedAnswer = event.target;
+            //把顏色答案重置成黑色
+            document.querySelectorAll('.Answer').forEach(answer => {
+                answer.style.color = "black";
+            });
+            //當使用者選擇答案時,答案會先變藍色
+            selectedAnswer.style.color = "blue";
+        }
+
+
+
+        //隨機生成錯誤答案,沒有跟正確答案重複
+        function getRandomWrongAnswer() {
+            let wrongAnswer;
+            do {
+                wrongAnswer = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+            } while (wrongAnswer === correctAnswer);
+            return wrongAnswer;
+        }
+
+        //將四個答案隨機排列
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        //隨機生成題目和答案
+        function RandomQuestion() {
+            correctAnswer = String.fromCharCode(Math.floor(Math.random() * 26) + 65); //取得26個英文字母的其中一個
+            document.getElementById("mp3").src = "./voices/" + correctAnswer + ".mp3";//取得26個英文字母的其中一個的語音檔
+            document.getElementById("mp3").play() //並直接播放
+
+            //生成三個錯誤答案
+            let answers = [correctAnswer, getRandomWrongAnswer(), getRandomWrongAnswer(), getRandomWrongAnswer()];
+            answers = shuffle(answers); //並隨機把答案放置
+
+            //將答案顯示在按鈕中
+            document.getElementById("Answer-1").innerText = answers[0];//把輸入框的答案變黑色
+            document.getElementById("Answer-2").innerText = answers[1];
+            document.getElementById("Answer-3").innerText = answers[2];
+            document.getElementById("Answer-4").innerText = answers[3];
+
+            //重置所有答案顏色為黑色
+            document.querySelectorAll('.Answer').forEach(answer => {
+                answer.style.color = "black";
+            });
+
+            //重置選擇狀態
+            selectedAnswer = null;
+
+        }
+
+        //檢查答案
+        function checkAnswer() {
+            //實作答案答對時,增加答對一題
+            if (selectedAnswer) {
+                if (selectedAnswer.innerText === correctAnswer) {
+                    selectedAnswer.style.color = "green";
+                    correctCount++; //
+                    document.getElementById("correctCount").innerText = correctCount;
+                    isAnswerChecked = true;//檢查答案是否正確
+                } else {
+                    selectedAnswer.style.color = "red";//否則顯示紅色
+                    isAnswerChecked = false;//檢查答案是否正確
+                }
+            }
+        }
+
+        //  按下一題時判斷
+        function nextQuestion() {
+            if (selectedAnswer) { //答對後按下一題時會出新題目
+                RandomQuestion();
+            } else {
+                alert("請檢查答案是否正確,再按下一題");
+            }
+        }
+
+        function start(){
+            document.getElementById("start-ui").style.display="none";
+            document.getElementById("main-ui").style.display="";
+            RandomQuestion(); 
+        }
+
+        //四顆按鈕
+        document.getElementById("Answer-1").addEventListener("click", selectAnswer);
+        document.getElementById("Answer-2").addEventListener("click", selectAnswer);
+        document.getElementById("Answer-3").addEventListener("click", selectAnswer);
+        document.getElementById("Answer-4").addEventListener("click", selectAnswer);
+        //綁定按鈕
+        document.getElementById("Sure").addEventListener("click", checkAnswer);//當按下確定時會核對答案有無正確
+        document.getElementById("Next").addEventListener("click", nextQuestion);//當按下一題時會隨機出題目
+
+        document.getElementById("start-ui").addEventListener("click",start);
+
+        // //頁面載入時隨機出題目
+        // window.onload = RandomQuestion; 
+    </script>
+</body>
+
+</html>
