@@ -60,8 +60,7 @@
 
 <body>
     <div id="start-ui">
-        <button id="start" type="button" class="btn btn-outline-success"
-            style="text-align: center;">開始</button>
+        <button id="start" type="button" class="btn btn-outline-success" style="text-align: center;">開始</button>
     </div>
     <div id="main-ui" style="display: none;">
         <div class="score">答對題數：<span id="correctCount">0</span></div>
@@ -69,13 +68,13 @@
             <audio id="mp3" class="mp3" controls src="./voices/A.mp3"></audio>
         </div>
         <div class="container" style="font-weight: bold;">
-            <div class="Answer" id="Answer-1">A</div>
+            <div class="Answer" id="Answer-1" >A</div>
             <div class="Answer" id="Answer-2">B</div>
             <div class="Answer" id="Answer-3">C</div>
             <div class="Answer" id="Answer-4">D</div>
         </div>
-        <button id="Sure" type="button" class="btn btn-outline-success"
-            style="margin-top:20px;text-align: center;">確定</button>
+        <!-- <button id="Sure" type="button" class="btn btn-outline-success"
+            style="margin-top:20px;text-align: center;">確定</button> -->
         <button id="Next" type="button" class="btn btn-outline-warning " style="margin-top:10px">下一題</button>
 
     </div>
@@ -93,7 +92,7 @@
                 answer.style.color = "black";
             });
             //當使用者選擇答案時,答案會先變藍色
-            selectedAnswer.style.color = "blue";
+            selectedAnswer.style.color = " blue";
         }
 
 
@@ -143,34 +142,57 @@
         }
 
         //檢查答案
-        function checkAnswer() {
-            //實作答案答對時,增加答對一題
-            if (selectedAnswer) {
-                if (selectedAnswer.innerText === correctAnswer) {
-                    selectedAnswer.style.color = "green";
-                    correctCount++; //
-                    document.getElementById("correctCount").innerText = correctCount;
-                    isAnswerChecked = true;//檢查答案是否正確
-                } else {
-                    selectedAnswer.style.color = "red";//否則顯示紅色
-                    isAnswerChecked = false;//檢查答案是否正確
-                }
-            }
-        }
+        // function checkAnswer() {
+        //     //實作答案答對時,增加答對一題
+        //     if (selectedAnswer) {
+        //         if (selectedAnswer.innerText === correctAnswer) {
+        //             selectedAnswer.style.color = "green";
+        //             correctCount++; //
+        //             document.getElementById("correctCount").innerText = correctCount;
+        //             isAnswerChecked = true;//檢查答案是否正確
+        //         } else {
+        //             selectedAnswer.style.color = "red";//否則顯示紅色
+        //             isAnswerChecked = false;//檢查答案是否正確
+        //         }
+        //     }
+        // }
 
         //  按下一題時判斷
         function nextQuestion() {
-            if (isAnswerChecked) { //答對後按下一題時會出新題目
-                RandomQuestion();
-            } else {
-                alert("請檢查答案是否正確,再按下一題");
+            if (!selectedAnswer) { 
+                alert("請檢查答案是否有被選擇,在按下一題");
+                return;
             }
-        }
+                if (selectedAnswer.innerText === correctAnswer) {
+                    correctCount++; //
+                    document.getElementById("correctCount").innerText = correctCount;
+                    selectedAnswer = true;//檢查答案是否正確
+                    RandomQuestion();//正確則直接跳下一題
+                } else {
+                    selectedAnswer.style.color = "red";//否則顯示紅色
+                    //alert("請檢查答案是否正確,再按下一題");
+                    isAnswerChecked = false;//檢查答案是否正確
 
-        function start(){
-            document.getElementById("start-ui").style.display="none";
-            document.getElementById("main-ui").style.display="";
-            RandomQuestion(); 
+                }
+            }
+                
+            
+
+        
+
+        //  按下一題時判斷
+        // function nextQuestion() {
+        //     if (isAnswerChecked) { //答對後按下一題時會出新題目
+        //         RandomQuestion();
+        //     } else {
+        //         alert("請檢查答案是否正確,再按下一題");
+        //     }
+        // }
+
+        function start() {
+            document.getElementById("start-ui").style.display = "none";
+            document.getElementById("main-ui").style.display = "";
+            RandomQuestion();
         }
 
         //四顆按鈕
@@ -179,10 +201,10 @@
         document.getElementById("Answer-3").addEventListener("click", selectAnswer);
         document.getElementById("Answer-4").addEventListener("click", selectAnswer);
         //綁定按鈕
-        document.getElementById("Sure").addEventListener("click", checkAnswer);//當按下確定時會核對答案有無正確
+        //document.getElementById("Sure").addEventListener("click", checkAnswer);//當按下確定時會核對答案有無正確
         document.getElementById("Next").addEventListener("click", nextQuestion);//當按下一題時會隨機出題目
 
-        document.getElementById("start-ui").addEventListener("click",start);
+        document.getElementById("start-ui").addEventListener("click", start);
 
         // //頁面載入時隨機出題目
         // window.onload = RandomQuestion; 
