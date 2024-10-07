@@ -47,6 +47,7 @@
             text-align: center;
             box-sizing: border-box;
             border: 1px solid black;
+            cursor: pointer;
         }
 
         .mp3 {
@@ -54,6 +55,15 @@
             text-align: center;
             margin-top: -150px;
             position: absolute;
+        }
+        .selected{
+            border: 2px solid blue;
+        }
+        .correct{
+            border: 2px solid green;
+        }
+        .wrong{
+            border: 2px solid red;
         }
     </style>
 </head>
@@ -75,7 +85,7 @@
         </div>
         <!-- <button id="Sure" type="button" class="btn btn-outline-success"
             style="margin-top:20px;text-align: center;">確定</button> -->
-        <button id="Next" type="button" class="btn btn-outline-warning " style="margin-top:10px">下一題</button>
+        <button id="Next" typ="button" class="btn btn-outline-warning " style="margin-top:10px">下一題</button>
 
     </div>
     <script>
@@ -89,10 +99,11 @@
             selectedAnswer = event.target;
             //把顏色答案重置成黑色
             document.querySelectorAll('.Answer').forEach(answer => {
-                answer.style.color = "black";
+                answer.classList.remove('selected','correct','wrong');
+                //selected：選取答案時顯示藍色,correct:答對顯示藍色,wront:答錯顯示紅色
             });
-            //當使用者選擇答案時,答案會先變藍色
-            selectedAnswer.style.color = " blue";
+            //當使用者選擇答案時,答案底部會先變藍色
+            selectedAnswer.classList.add('selected');
         }
 
 
@@ -102,7 +113,7 @@
             let wrongAnswer;
             do {
                 wrongAnswer = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
-            } while (wrongAnswer === correctAnswer);
+            } while (wrongAnswer === correctAnswer || wrongAnswer === null);
             return wrongAnswer;
         }
 
@@ -122,8 +133,18 @@
             document.getElementById("mp3").play() //並直接播放
 
             //生成三個錯誤答案
-            let answers = [correctAnswer, getRandomWrongAnswer(), getRandomWrongAnswer(), getRandomWrongAnswer()];
-            answers = shuffle(answers); //並隨機把答案放置
+            //let answers = [correctAnswer, getRandomWrongAnswer(), getRandomWrongAnswer(), getRandomWrongAnswer()];
+            //answers = shuffle(answers); //並隨機把答案放置
+
+            //生成三個錯誤答案
+            let answers = [correctAnswer];
+            while (answers.length < 4) {
+                let wrong = getRandomWrongAnswer();
+                if(!answers.includes(wrong)) {
+                    answers.push(wrong);
+                }
+            }
+            answers = shuffle(answers);//隨機放置答案
 
             //將答案顯示在按鈕中
             document.getElementById("Answer-1").innerText = answers[0];//把輸入框的答案變黑色
@@ -133,7 +154,7 @@
 
             //重置所有答案顏色為黑色
             document.querySelectorAll('.Answer').forEach(answer => {
-                answer.style.color = "black";
+                answer.classList.remove('selected','correct','wrong');
             });
 
             //重置選擇狀態
@@ -163,21 +184,31 @@
                 alert("請檢查答案是否有被選擇,在按下一題");
                 return;
             }
+            //防止下一題按鈕重複點擊
+            const nextButton = document.getElementById("Next");
+            nextButton.disabled = true;
+
                 if (selectedAnswer.innerText === correctAnswer) {
                     correctCount++; //
                     document.getElementById("correctCount").innerText = correctCount;
-                    selectedAnswer = true;//檢查答案是否正確
-                    RandomQuestion();//正確則直接跳下一題
+                    selectedAnswer.classList.remove('selected');//答對時底部邊框
+                    selectedAnswer.classList.add('correct');//底部變色
+                    //selectedAnswer = true;//檢查答案是否正確
+
+                    //答對時停留一秒在自動進到下一題
+                   setTimeout(RandomQuestion, 1000);
                 } else {
-                    selectedAnswer.style.color = "red";//否則顯示紅色
-                    //alert("請檢查答案是否正確,再按下一題");
-                    isAnswerChecked = false;//檢查答案是否正確
+                    selectedAnswer.classList.remove('selected');
+                    selectedAnswer.classList.add('wrong');//底部變色
+                    alert("請檢查答案是否正確,再按下一題");
+                    //selectedAnswer = false;//檢查答案是否正確
 
                 }
+                //啟用下一題按鈕
+                nextButton.disabled = false;
             }
                 
             
-
         
 
         //  按下一題時判斷
@@ -191,7 +222,7 @@
 
         function start() {
             document.getElementById("start-ui").style.display = "none";
-            document.getElementById("main-ui").style.display = "";
+            document.getElementById("main-ui").style.display = "flex";
             RandomQuestion();
         }
 
@@ -204,7 +235,7 @@
         //document.getElementById("Sure").addEventListener("click", checkAnswer);//當按下確定時會核對答案有無正確
         document.getElementById("Next").addEventListener("click", nextQuestion);//當按下一題時會隨機出題目
 
-        document.getElementById("start-ui").addEventListener("click", start);
+        document.getElementById("start").addEventListener("click", start);
 
         // //頁面載入時隨機出題目
         // window.onload = RandomQuestion; 
