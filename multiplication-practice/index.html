@@ -22,19 +22,25 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
+            align-items: 20px;
         }
 
         .Topic-a {
-            width: 100px;
+            width: 150px;
             height: 60px;
             font-size: 30px;
             border: 1px solid black;
             text-align: center;
             font-family: "monospace";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
         }
 
-        .Equal to {
+        .EqualTo {
             font-size: 30px;
+            margin: 0 20px;
         }
 
         .Answer-c {
@@ -43,14 +49,29 @@
             font-size: 30px;
             text-align: center;
             font-family: "monospace";
+            border: 1px solid black;
+            border-radius: 5px;
+            transition: border-color 0.3s, color 0.3s;
+            /* 增加過渡效果 */
         }
-        .score{
+
+        .score {
             color: darksalmon;
             font-size: 20px;
             position: absolute;
             font-weight: bold;
             top: 20px;
             right: 20px;
+        }
+
+        .correct {
+            border-color: green;
+            color: green;
+        }
+
+        .wrong {
+            border-color: red;
+            color: red;
         }
     </style>
 </head>
@@ -59,66 +80,113 @@
     <div class="score">答對題數:<span id="correctCount">0</span></div>
     <div class="container">
         <div id="Topic" class="Topic-a">題目</div> <!--題目 -->
-        <div class="Equal to">=</div>
-        <input id="Answer" value="" class="Answer-c" placeholder="答案" style="font-size: 30px;"><!--答案輸入框 -->
+        <div class="EqualTo">=</div>
+        <input id="Answer"  class="Answer-c" placeholder="答案" type="number" min="0" step="1"><!--答案輸入框 -->
     </div>
-    <button id="Sure" type="button" class="btn btn-outline-success" style="margin-top:20px">確定</button>
+    <!-- <button id="Sure" type="button" class="btn btn-outline-success" style="margin-top:20px">確定</button> -->
     <button id="Next" type="button" class="btn btn-outline-warning " style="margin-top:10px">下一題</button>
-    
 
 
 
     <script>
         let correctAnswer; //儲存答案的名稱
-        let isAnswerChecked = false; //檢查答案的名稱
+        //let isAnswerChecked = null; //檢查答案的名稱
         let correctCount = 0; //設定答對題數初始值為零
 
         //生成乘數與被成數
         function RandomQuestion() {
-            const multiplier = (Math.floor(Math.random() * 8) + 2); //乘數
-            const multiplicand = (Math.floor(Math.random() * 8) + 2);//被乘數
-            const question = `${multiplier} * ${multiplicand}`//先行成乘數與被乘數算式出來
+            const multiplier = Math.floor(Math.random() * 8) + 2; //乘數
+            const multiplicand = Math.floor(Math.random() * 8) + 2;//被乘數
+            const question = `${multiplier} * ${multiplicand}`;//先行成乘數與被乘數算式出來
             correctAnswer = multiplier * multiplicand; //開始計算
 
             //顯示題目在題目框中
-            document.getElementById("Topic").innerText = question;  //顯示題目
-            document.getElementById("Answer").value = "";//輸入答案
-            document.getElementById("Answer").style.color = "black";//把輸入框
-            
-            isAnswerChecked = false;
+            document.getElementById("Topic").innerText = question;//顯示題目
+            const answerInput = document.getElementById("Answer");
+            answerInput.value = "";//重置輸入框
+            answerInput.classList.remove('correct', 'wrong');//重置樣式
+            answerInput.style.color = "black";//文字初始顏色
+
+            //啟用輸入框和下一題按鈕
+            answerInput.disabled = false;
+            document.getElementById("Next").disabled = false;
+            //document.getElementById("Answer").value = "";//輸入答案
+            //document.getElementById("Answer").style.color = "black";//把輸入框
+
+            //isAnswerChecked = false;
         }
+        //檢查答案並處理顏色變更和分數更新
+        function checkAnswerAndNext() {
+            const answerInput = document.getElementById("Answer");
+            const userAnswer = parseInt(answerInput.value.trim());
 
-        //檢查答案
-        function checkAnswer() { 
-            const colorAnswer = document.getElementById("Answer");
-            const userAnswer = colorAnswer.value;
+            //防止使用者為輸入答案
+            if (isNaN(userAnswer)) {
+                alert("請輸入有效的數字");
+                return;
+            }
+            //禁用下一題按鈕,防止被連續點擊
+            const nextButton = document.getElementById("Next");
+            nextButton.disabled = true;
 
-            if (parseInt(userAnswer) === correctAnswer) { //當輸入框裡數字等於答案時
-                colorAnswer.style.color = "green"; //顯示綠色
-                //實作答案答對時,增加答對一題
-                if (!isAnswerChecked) {
-                    correctCount++; //
-                    document.getElementById("correctCount").innerText = correctCount;
-
-                    isAnswerChecked = true;//檢查答案是否正確
-                }
+            if (userAnswer === correctAnswer) {
+                correctCount++; //
+                document.getElementById("correctCount").innerText = correctCount;
+                answerInput.classList.remove('wrong');
+                answerInput.classList.add('correct');//答對顯示綠色
             } else {
-                colorAnswer.style.color = "red";//否則顯示紅色
-                isAnswerChecked = false;//檢查答案是否正確
+                answerInput.classList.remove('correct');
+                answerInput.classList.add('wrong');
+                alert(`請檢查答案是否正確,再按下一題`);
             }
-        }
-        //  按下一題時判斷
-        function nextQuestion() {
-            if(isAnswerChecked) { //答對後按下一題時會出新題目
-                RandomQuestion();
-            }else{
-                alert("請檢查答案是否正確,再按下一題");
-            }
-        }
-        //綁定按鈕
-        document.getElementById("Sure").addEventListener("click", checkAnswer);//當按下確定時會核對答案有無正確
-        document.getElementById("Next").addEventListener("click", nextQuestion);//當按下一題時會隨機出題目
+            //檢查答案時輸入框禁用
+            answerInput.disabled = true;
 
+            //停留一秒後自動進到下一題
+            setTimeout(() => {
+                RandomQuestion();
+            }, 1000);
+        }
+        //當輸入框裡數字等於答案時
+        // //檢查答案
+        // function checkAnswer() { 
+        //     const colorAnswer = document.getElementById("Answer");
+        //     const userAnswer = colorAnswer.value;
+
+        //     if (parseInt(userAnswer) === correctAnswer) { //當輸入框裡數字等於答案時
+        //         colorAnswer.style.color = "green"; //顯示綠色
+        //         //實作答案答對時,增加答對一題
+        //         if (!isAnswerChecked) {
+        //             correctCount++; //
+        //             document.getElementById("correctCount").innerText = correctCount;
+        //             setTimeout(RandomQuestion, 1000);
+        //             //isAnswerChecked = true;//檢查答案是否正確
+        //         }
+        //     } else {
+        //         colorAnswer.style.color = "red";//否則顯示紅色
+        //         isAnswerChecked = false;//檢查答案是否正確
+        //     }
+        // }
+
+
+        //  按下一題時判斷
+        // function nextQuestion() {
+        //     if (isAnswerChecked) { //答對後按下一題時會出新題目
+        //         RandomQuestion();
+        //     } else {
+        //         alert("請檢查答案是否正確,再按下一題");
+        //     }
+        // }
+
+        //綁定按鈕
+        //document.getElementById("Sure").addEventListener("click", checkAnswer);//當按下確定時會核對答案有無正確
+        document.getElementById("Next").addEventListener("click", checkAnswerAndNext);//當按下一題時會隨機出題目
+
+        // document.getElementById("Answer").addEventListener("Keypress",function(event){
+        //     if(event.key === "Enter") {
+        //         document.getElementById("Next").click();
+        //     }
+        // });數
         //頁面載入時隨機出題目
         window.onload = RandomQuestion;        
     </script>
