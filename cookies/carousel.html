@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="css" href="./css.css"> -->
+</head>
+<style>
+    :root {
+        --ease-out-circ: cubic-bezier(0, 0.55, 0.45, 1);
+    }
+
+    body {
+        overflow: hidden;
+    }
+
+    .images {
+        /* 設定圖片的數量 */
+
+        --image-count: 12;
+
+        /* 計算圖片的寬度：根據圖片的數量將視窗寬度分割 */
+        --image-width: calc(300vw / var(--image-count));
+        /* 圖片寬度 */
+
+        /* 設定位移量：根據圖片數量進行位移 */
+        --shift: 4vw * var(--image-count);
+
+        /* 設定滑鼠滾輪的動態變量 */
+        --wheel-momentum: 0;
+
+        /* 設定元件為相對定位，用於疊加效果 */
+        position: relative;
+
+        /* 開啟3D效果，使得元件能夠呈現立體變化 */
+        transform-style: preserve-3d;
+
+        /* 設定過渡效果，持續時間為2秒，使用自定義的 ease-out 速度曲線 */
+        transition: 2s var(--ease-out-circ);
+    }
+
+    .images__rotator {
+        /* 設定旋轉區域的寬度，充滿整個視窗 */
+        width: 100vw;
+
+        /* 設定旋轉區域的高度，充滿整個視窗 */
+        height: 100vh;
+
+        /* 開啟3D效果，使得元件內部的圖片能夠呈現立體效果 */
+        transform-style: preserve-3d;
+
+        /* 設定旋轉區域的過渡效果 */
+        transition: 2s var(--ease-out-circ);
+    }
+
+    .images__item {
+        filter: blur(4px) brightness(0.6);
+        transition: transform 0.8s, filter 0.4s;
+
+        /* 計算Z軸的位移量：根據移動距離（--shift）與滾輪動量（--wheel-momentum）動態調整 */
+        --offset-z: calc(var(--shift) + var(--wheel-momentum) * 0.2px);
+
+        /* 設定圖片的絕對定位，以便在父元素內自由移動 */
+        position: absolute;
+
+        /* 設定圖片的寬度，根據預設變量 --image-width 進行調整 */
+        width: var(--image-width);
+
+        /* 設定圖片的縱橫比例為9:16 */
+        aspect-ratio: 9 / 16;
+
+        /* 設定圖片的垂直與水平定位到父容器的中心 */
+        top: 50%;
+        left: 50%;
+
+        /* 設定變形效果 */
+        transform:
+            /* 使圖片以自身寬高中心為基準進行位移 */
+            translate3d(-50%, -50%, 0)
+            /* 設定圖片的Y軸旋轉角度，根據圖片數量進行等分 */
+            rotateY(calc((360deg / var(--image-count)) * var(--index)))
+            /* 設定Z軸的位移，依據 --offset-z 動態調整 */
+            translateZ(var(--offset-z))
+            /* 根據滾輪動量（--wheel-momentum）動態縮放 */
+            scale(calc(1 - var(--wheel-momentum)));
+
+        /* 設定變形效果的過渡時間 */
+        transition: transform 0.8s;
+
+        /* 子元素 img 標籤的樣式 */
+        img {
+            /* 設定圖片寬度填滿容器 */
+            width: 100%;
+
+            /* 設定圖片高度填滿容器 */
+            height: 100%;
+
+            /* 設定圖片裁剪方式為 cover，以保持縱橫比例 */
+            object-fit: cover;
+        }
+    }
+    .images__item:hover {
+        filter: blur(0px) brightness(1);
+    }
+</style>
+
+<body>
+    <div class="images">
+        <div class="images__rotator">
+            <div class="images__item" style="--index:0">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/d2/09/7b/d2097b32fadc9851f408dbb49fdc71f1.jpg" alt="鬆餅">
+            </a>
+            </div>
+            <div class="images__item" style="--index:1">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/4e/d8/0a/4ed80a82b58f2f58639164edb33b4c4f.jpg" alt="草莓鬆餅">
+            </a>
+            </div>
+            <div class="images__item" style="--index:2">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/d2/12/83/d21283c8e182ddbb7df4e48c4d9c5522.jpg" alt="草莓生乳捲">
+            </a>
+            </div>
+            <div class="images__item" style="--index:3">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/b3/f9/8a/b3f98ae0b6710dcc419a8b3e476b4f3d.jpg" alt="可頌">
+            </a>
+            </div>
+            <div class="images__item" style="--index:4">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/44/eb/f6/44ebf67ad3e42626c49052c13f2fdc48.jpg" alt="莓果塔">
+            </a>
+            </div>
+            <div class="images__item" style="--index:5">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/fc/62/61/fc62613e6a8de5852bc51b1eb510a46d.jpg" alt="仙草凍">
+            </a>
+            </div>
+            <div class="images__item" style="--index:6">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/80/f5/c2/80f5c252445b004446862d155ae32930.jpg" alt="布郎尼">
+            </a>
+            </div>
+            <div class="images__item" style="--index:7">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/98/13/11/9813111f08018f7e29458bf33fb01aa0.jpg" alt="可麗露">
+            </a>
+            </div>
+            <div class="images__item" style="--index:8">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/fc/1d/22/fc1d2294fb77bc8ceff6e5767a17be34.jpg" alt="曲奇餅乾">
+            </a>
+            </div>
+            <div class="images__item" style="--index:9">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/84/0b/f6/840bf69c64f9657d632547505a9ccb13.jpg" alt="水果大福">
+            </a>
+            </div>
+            <div class="images__item" style="--index:10">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/6e/86/5a/6e865ab456767982c24458aa7be9d62d.jpg" alt="抹茶蛋塔">
+            </a>
+            </div>
+            <div class="images__item" style="--index:11">
+                <a href="">
+                <img src="https://i.pinimg.com/474x/10/c5/de/10c5de95679a285a833b9ca13b19f883.jpg" alt="軟餅乾">
+            </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const images = document.querySelector('.images');
+        const imagesRotator = document.querySelector('.images__rotator');
+        const rotationAngles = { x: -4, y: 200, z: 0 };
+
+        document.body.addEventListener('wheel', (e) => {
+            const friction = 7;
+            const wheel = e.deltaY / friction;
+
+            rotationAngles.y -= wheel * 1;
+            setWheelMomentum(wheel);
+        });
+        document.body.addEventListener('mousemove', (e) => {
+            const y = e.clientY - innerHeight / 2;
+            const x = e.clientX - innerWidth / 2;
+            rotationAngles.x = y / 60;
+            rotationAngles.z = x / 100;
+        });
+
+        function runAnimations() {
+            animateImages()
+            animateImagesRotator()
+            requestAnimationFrame(runAnimations);
+        }
+        document.addEventListener('DOMContentLoaded', runAnimations);
+
+        const animateImages = () => {
+            images.style.setProperty('transform', `rotateX(${rotationAngles.x}deg) rotateZ(${rotationAngles.z}deg)`);
+        };
+        const animateImagesRotator = () => {
+            imagesRotator.style.setProperty('transform', `rotateY(${rotationAngles.y}deg)`);
+        };
+
+        let wheelMomentumTimeout = null;
+        const setWheelMomentum = (momentum = 1) => {
+            const friction = 500;
+            images.style.setProperty('--wheel-momentum', momentum / friction);
+
+            clearTimeout(wheelMomentumTimeout);
+
+            wheelMomentumTimeout = setTimeout(() => {
+                images.style.setProperty('--wheel-momentum', 0);
+            }, 1000);
+        };
+    </script>
+</body>
+
+</html>

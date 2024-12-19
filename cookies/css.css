@@ -1,0 +1,90 @@
+:root {
+    --ease-out-circ: cubic-bezier(0, 0.55, 0.45, 1);
+}
+
+body {
+    overflow: hidden;
+}
+
+.images {
+    /* 設定圖片的數量 */
+
+    --image-count: 12;
+
+    /* 計算圖片的寬度：根據圖片的數量將視窗寬度分割 */
+    --image-width: calc(300vw / var(--image-count));
+    /* 圖片寬度 */
+
+    /* 設定位移量：根據圖片數量進行位移 */
+    --shift: 4vw * var(--image-count);
+
+    /* 設定滑鼠滾輪的動態變量 */
+    --wheel-momentum: 0;
+
+    /* 設定元件為相對定位，用於疊加效果 */
+    position: relative;
+
+    /* 開啟3D效果，使得元件能夠呈現立體變化 */
+    transform-style: preserve-3d;
+
+    /* 設定過渡效果，持續時間為2秒，使用自定義的 ease-out 速度曲線 */
+    transition: 2s var(--ease-out-circ);
+}
+
+.images__rotator {
+    /* 設定旋轉區域的寬度，充滿整個視窗 */
+    width: 100vw;
+
+    /* 設定旋轉區域的高度，充滿整個視窗 */
+    height: 100vh;
+
+    /* 開啟3D效果，使得元件內部的圖片能夠呈現立體效果 */
+    transform-style: preserve-3d;
+
+    /* 設定旋轉區域的過渡效果 */
+    transition: 2s var(--ease-out-circ);
+}
+
+.images__item {
+    /* 計算Z軸的位移量：根據移動距離（--shift）與滾輪動量（--wheel-momentum）動態調整 */
+    --offset-z: calc(var(--shift) + var(--wheel-momentum) * 0.2px);
+
+    /* 設定圖片的絕對定位，以便在父元素內自由移動 */
+    position: absolute;
+
+    /* 設定圖片的寬度，根據預設變量 --image-width 進行調整 */
+    width: var(--image-width);
+
+    /* 設定圖片的縱橫比例為9:16 */
+    aspect-ratio: 9 / 16;
+
+    /* 設定圖片的垂直與水平定位到父容器的中心 */
+    top: 50%;
+    left: 50%;
+
+    /* 設定變形效果 */
+    transform:
+        /* 使圖片以自身寬高中心為基準進行位移 */
+        translate3d(-50%, -50%, 0)
+        /* 設定圖片的Y軸旋轉角度，根據圖片數量進行等分 */
+        rotateY(calc((360deg / var(--image-count)) * var(--index)))
+        /* 設定Z軸的位移，依據 --offset-z 動態調整 */
+        translateZ(var(--offset-z))
+        /* 根據滾輪動量（--wheel-momentum）動態縮放 */
+        scale(calc(1 - var(--wheel-momentum)));
+
+    /* 設定變形效果的過渡時間 */
+    transition: transform 0.8s;
+
+    /* 子元素 img 標籤的樣式 */
+    img {
+        /* 設定圖片寬度填滿容器 */
+        width: 100%;
+
+        /* 設定圖片高度填滿容器 */
+        height: 100%;
+
+        /* 設定圖片裁剪方式為 cover，以保持縱橫比例 */
+        object-fit: cover;
+    }
+}
